@@ -1,0 +1,16 @@
+{
+  "name": "ourlives-app",
+  "type": "static",
+  "static": {
+    "public": "dist",
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }]
+  },
+  "version":1,
+  "alias": "ourlives",
+  "files": [
+    "dist"
+  ]
+}
