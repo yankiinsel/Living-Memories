@@ -84,8 +84,8 @@ import axios from 'axios';
 import $Scriptjs from 'scriptjs';
 import TextHighlight from 'vue-text-highlight';
 import Highlighter from 'vue-highlight-words';
-import MemoryImg from './MemoryImg.vue';
-import AnnotationRect from './AnnotationRect.vue';
+import MemoryImg from './../components/MemoryImg.vue';
+import AnnotationRect from './../components/AnnotationRect.vue';
 
 const $ = require('jquery');
 
@@ -93,7 +93,7 @@ window.$ = $;
 require('jquery-confirm');
 
 export default {
-  name: 'MemoryDetail',
+  name: 'StoryDetail',
   // Variables here
   props: ['name'],
 
@@ -115,8 +115,6 @@ export default {
       memory: {},
       annotatedText: '',
       id: '',
-      baseURL: 'https://beaver-memories.now.sh',
-      annotationURL: 'https://beaver-annotations.now.sh',
       annotations: [],
       annotationImageRectRatio: {},
       annotationImageRect: {},

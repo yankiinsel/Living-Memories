@@ -1,5 +1,5 @@
 <template>
-  <div id="Profile">
+  <div id="Post">
     <div class="postMemory">
       <div class="inputText">
         <div class="thumbnail">
@@ -98,7 +98,7 @@
           </div>
           <router-link
             class="view-annotations"
-            :to="{ name: 'Memory', params: { id: memory.id }}">
+            :to="{ name: 'StoryDetail', params: { id: memory.id }}">
             View annotations
           </router-link>
 
@@ -126,7 +126,7 @@ import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 Vue.use(datePicker);
 
 export default {
-  name: 'ProfilePage',
+  name: 'NewPost',
   // Variables here
   props: ['name'],
 
@@ -438,7 +438,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#Profile {
+#Post {
   display: grid;
   background-image: linear-gradient(to top, #f7e3d888, #ced7f088);
   width: 100%;
