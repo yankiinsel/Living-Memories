@@ -45,11 +45,11 @@
 </template>
 
 <script>
-import { StoryService } from '../services/storyService';
+import StoryService from './../services/storyService';
 
 export default {
   name: 'Stories',
-  // Variables here
+
   data() {
     return {
       memories: [],
@@ -61,7 +61,6 @@ export default {
     this.filterSearch();
   },
 
-  // Setters here
   computed: {
     filteredMemories() {
       return this.memories.filter(memory =>
@@ -70,30 +69,28 @@ export default {
 
   },
 
-  // Methods here
   methods: {
     async filterSearch() {
       this.memories = [];
 
       // Get the memories to be shown from the API
-      StoryService.get('memories')
-        .then((res) => {
-          res.data.forEach((memory) => {
-            this.memories.push({
-              title: memory.title,
-              description: memory.description,
-              location: memory.location,
-              coords: memory.coords,
-              taggedPeople: memory.taggedPeople,
-              username: memory.username,
-              isPublic: memory.isPublic,
-              date: memory.date,
-              imgUrl: memory.imgUrl,
-              // eslint-disable-next-line
+      await StoryService.get('memories', (res) => {
+        res.data.forEach((memory) => {
+          this.memories.push({
+            title: memory.title,
+            description: memory.description,
+            location: memory.location,
+            coords: memory.coords,
+            taggedPeople: memory.taggedPeople,
+            username: memory.username,
+            isPublic: memory.isPublic,
+            date: memory.date,
+            imgUrl: memory.imgUrl,
+            // eslint-disable-next-line
               id: memory._id,
-            });
           });
         });
+      });
     },
 
     dateToString(date) {
