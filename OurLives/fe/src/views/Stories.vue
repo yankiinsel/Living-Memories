@@ -45,7 +45,9 @@
 </template>
 
 <script>
-import StoryService from './../services/storyService';
+import StoryService from '../services/StoryService';
+import Memory from '../models/Memory';
+
 
 export default {
   name: 'Stories',
@@ -58,7 +60,7 @@ export default {
   },
 
   created() {
-    this.filterSearch();
+    this.prepareMemories();
   },
 
   computed: {
@@ -70,11 +72,11 @@ export default {
   },
 
   methods: {
-    async filterSearch() {
+    async prepareMemories() {
       this.memories = [];
 
       // Get the memories to be shown from the API
-      await StoryService.get('memories', (res) => {
+      await StoryService.getAllMemories((res) => {
         res.data.forEach((memory) => {
           this.memories.push({
             title: memory.title,
@@ -87,44 +89,17 @@ export default {
             date: memory.date,
             imgUrl: memory.imgUrl,
             // eslint-disable-next-line
-              id: memory._id,
+            id: memory._id,
           });
         });
       });
     },
 
     dateToString(date) {
-      let retval = '';
-
-      // Return if only decade is given
-      // e.g. 90s
-      if (!date.year && date.decade) {
-        retval = `${date.decade}s`;
-        return retval;
-      }
-
-      // Add the available year, month, day and time info of the date
-      // in that specific order. Thus, there cannot be only the year and
-      // the time but not the day or month
-      if (date.year) {
-        retval = date.year;
-      }
-
-      if (date.month && date.year) {
-        retval = `${date.month} ${retval}`;
-      }
-
-      if (date.day && date.month && date.year) {
-        retval = `${date.month} ${date.day}th, ${date.year}`;
-      }
-
-      if (date.day && date.month && date.year && date.time) {
-        retval = `${date.time}, ${date.month} ${date.day}th, ${date.year}`;
-      }
-
-      return retval;
+      return Memory.dateToString(date);
     },
   },
+
 };
 </script>
 

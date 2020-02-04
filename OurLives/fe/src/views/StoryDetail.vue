@@ -31,7 +31,7 @@
           </Highlighter>
           <Highlighter v-if="memory.date"
                        :searchWords="queries"
-                       :textToHighlight="'Date: ' + getMemoryDate(memory.date)"
+                       :textToHighlight="'Date: ' + dateToString(memory.date)"
                        :autoEscape="true"
                        class="memory-time">
           </Highlighter>
@@ -86,6 +86,10 @@ import TextHighlight from 'vue-text-highlight';
 import Highlighter from 'vue-highlight-words';
 import MemoryImg from './../components/MemoryImg.vue';
 import AnnotationRect from './../components/AnnotationRect.vue';
+import StoryService from './../services/StoryService';
+import AnnotationService from './../services/AnnotationService';
+import Memory from './../models/Memory';
+import Annotation from './../models/Annotation';
 
 const $ = require('jquery');
 
@@ -311,18 +315,15 @@ export default {
     },
 
     async getMemory() {
-        await axios.get(`${this.baseURL}/memory/${this.id}`)
-        .then((res) => {
+      await StoryService.getMemory(this.id, (res) => {
             this.memory = res.data[0];
-        })
+        });
     },
 
     async getAnnotations() {
-      await axios.get(`${this.annotationURL}/getAnnotations/${window.location.host+window.location.pathname}`)
-      .then(res => {
-        console.log(res.data);
+      AnnotationService.get(window.location.host+window.location.pathname, () => {
         this.annotations = res.data;
-      })
+      });
     },
 
     rect(annotation) {
@@ -379,29 +380,8 @@ export default {
       }
     },
 
-    getMemoryDate(date) {
-      let a = '';
-      if (!date.year && date.decade) {
-        a = `${date.decade}s`;
-        return a;
-      }
-
-      if (date.year) {
-        a = date.year;
-      }
-
-      if (date.month && date.year) {
-        a = `${date.month} ${a}`;
-      }
-
-      if (date.day && date.month && date.year) {
-        a = `${date.month} ${date.day}th, ${date.year}`;
-      }
-
-      if (date.day && date.month && date.year && date.time) {
-        a = `${date.time}, ${date.month} ${date.day}th, ${date.year}`;
-      }
-      return a;
+    dateToString(date) {
+      return Memory.dateToString(date);
     },
 
     async annotate() {
