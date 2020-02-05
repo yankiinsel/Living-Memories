@@ -1,8 +1,9 @@
 <template>
   <div id="Stories">
-    <div class="searchBar">
+    <div class="searchGroup">
       <b-input-group size="lg" class="mb-3">
-        <b-form-input v-model="searchedKeyword"
+        <b-form-input class="searchBar"
+                      v-model="searchedKeyword"
                       type="text"
                       placeholder="Search for memories">
         </b-form-input>
@@ -113,7 +114,7 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
-  grid-template:  ". searchBar ."  auto
+  grid-template:  ". searchGroup ."  auto
                   ". memories  ."  auto
                   / 13% 1fr 13%;
 }
@@ -132,6 +133,7 @@ export default {
   grid-area: memoryList;
   grid-auto-rows: auto;
   grid-gap: 20px;
+  padding-left: 0;
 }
 
 ul.memoryList li {
@@ -147,10 +149,10 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
   grid-template: " .          .                 .              .                      " 36px
                  " thumbnail  title             title          .                      " auto
                  " thumbnail  description       description    .                      " auto
-                " thumbnail   .                 .              view-details           " 1fr
+                 " thumbnail  .                 .              view-details           " 1fr
                  / auto       1fr               auto           auto;
   text-align: left;
-  box-shadow: 8px 8px #00000017;
+  box-shadow: 4px 4px #00000017;
 }
 
 .thumbnail img {
@@ -189,9 +191,13 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
   grid-area: location;
   margin-top: 24px;
 }
+.searchGroup {
+  grid-area: searchGroup;
+  margin-top: 24px;
+}
+
 .searchBar {
-  grid-area: searchBar;
-  margin-top: 24px
+  margin-right: 8px;
 }
 
 </style>

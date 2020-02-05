@@ -4,37 +4,23 @@
     <div class="memoryCell">
         <p class="title">{{ memory.title }}</p>
         <!-- <p v-html="memory.description"> -->
-        <div class="description" @click="clickHandle($event)">
-          <Highlighter :searchWords="queries"
-                       :textToHighlight="memory.description"
-                       :autoEscape="true"
-                       class="memory-description">
-          </Highlighter>
-          <Highlighter v-if="memory.username"
-                       :searchWords="queries"
-                       :textToHighlight="'Author: ' + memory.username"
-                       :autoEscape="true"
-                       class="memory-username">
-          </Highlighter>
-          <Highlighter v-if="memory.location"
-                       :searchWords="queries"
-                       :textToHighlight="'Location: ' + memory.location"
-                       :autoEscape="true"
-                       class="memory-location">
-          </Highlighter>
+        <div class="description">
+          <p :searchWords="queries" class="memory-description">
+            {{ memory.description }}
+          </p>
+          <p v-if="memory.username" class="memory-username">
+            {{ 'Author: ' + memory.username }}
+          </p>
+          <p v-if="memory.location" class="memory-location">
+            {{ 'Location: ' + memory.location }}
+          </p>
           <div class="google-map" :id="mapName"></div>
-          <Highlighter v-if="memory.taggedPeople"
-                       :searchWords="queries"
-                       :textToHighlight="'People: ' + memory.taggedPeople"
-                       :autoEscape="true"
-                       class="memory-people">
-          </Highlighter>
-          <Highlighter v-if="memory.date"
-                       :searchWords="queries"
-                       :textToHighlight="'Date: ' + dateToString(memory.date)"
-                       :autoEscape="true"
-                       class="memory-time">
-          </Highlighter>
+          <p v-if="memory.taggedPeople" class="memory-people">
+            {{ 'People: ' + memory.taggedPeople }}
+          </p>
+          <p v-if="memory.date" class="memory-time">
+            {{ 'Date: ' + dateToString(memory.date) }}
+          </p>
         </div>
         <!-- </p> -->
         <b-button class="annotate"
@@ -48,33 +34,13 @@
           placeholder="Enter your annotation..."
         />
         <div class="thumbnail">
-          <memory-img @anno-rect-hover="isInAnnoRect"
-                      @anno-rect-changed="annoRectChanged"
-                      @photo-loaded="photoLoaded"
-                      v-if="memory.imgUrl"
-                      :img-url="memory.imgUrl"
-                      ref="memoryImage">
-            <annotation-rect :position="annotationImageRect"></annotation-rect>
-            <annotation-rect
-              v-for="annotation in imageAnnotations"
-              :key="annotation.id"
-              :position="annotation.rect">
-            </annotation-rect>
-          </memory-img>
+          <img @photo-loaded="photoLoaded"
+                v-if="memory.imgUrl"
+                :img-url="memory.imgUrl"
+                ref="memoryImage"/>
         </div>
         <br>
     </div>
-    <div class="annotationComments">
-      <h2>Annotations</h2>
-      <ul class="comments" id="comments">
-        <li v-for="comment in comments" :key="comment">
-          <p>{{comment.author}}:</p>
-          <p>{{comment.comment}}</p>
-        </li>
-      </ul>
-    </div>
-    <!-- <pre id="annot">{"type": "TextQuoteSelector","exact": "{{ annotatedText }}"}</pre> -->
-    <pre id="debug" style="display:none">{{ annotationTextObject }}</pre>
   </div>
 </div>
 </template>
@@ -82,14 +48,9 @@
 
 import axios from 'axios';
 import $Scriptjs from 'scriptjs';
-import TextHighlight from 'vue-text-highlight';
-import Highlighter from 'vue-highlight-words';
-import MemoryImg from './../components/MemoryImg.vue';
-import AnnotationRect from './../components/AnnotationRect.vue';
 import StoryService from './../services/StoryService';
 import AnnotationService from './../services/AnnotationService';
 import Memory from './../models/Memory';
-import Annotation from './../models/Annotation';
 
 const $ = require('jquery');
 
@@ -108,10 +69,6 @@ export default {
   },
 
   components: {
-    MemoryImg,
-    AnnotationRect,
-    TextHighlight,
-    Highlighter,
   },
 
   data() {
@@ -167,17 +124,13 @@ export default {
       this.textAnnotations.forEach(anno => {
       });
       try {
-      var a = this.textAnnotations
+        var a = this.textAnnotations
                 .filter(annotation => annotation.target.selector.exact.includes(this.clickedText))
                 .map(annotation => { return {comment: annotation.body.value, author: annotation.creator.name} });
       } catch (e) {
         console.log(e);
       }
       return a;
-    },
-
-    imgRatioText() {
-      return `${this.annotationImageRectRatio.x},${this.annotationImageRectRatio.y},${this.annotationImageRectRatio.width},${this.annotationImageRectRatio.height}`
     },
 
     coordinates() {
@@ -236,42 +189,6 @@ export default {
       return this.annotations.filter(annotation => annotation.target.selector && annotation.target.selector.type === 'TextQuoteSelector');
     },
 
-    imageAnnotations() {
-      return this.annotations
-              .filter(annotation => annotation.target.type === 'Image')
-              .map(annotation => {
-                if (!this.isPhotoLoaded ||
-                    !this.$refs.memoryImage ||
-                    !annotation.target.id ||
-                    !annotation.target.id.includes('#xywh=')) {
-                      return null;
-                };
-                const { width: imageWidth, height: imageHeight} = this.$refs.memoryImage.$refs.image.getBoundingClientRect();
-                return {
-                  id: annotation._id,
-                  rect: this.getAbsoluteRect({
-                    rect: this.rect(annotation),
-                    imageWidth,
-                    imageHeight,
-                  })
-                }
-              })
-    },
-
-    imageAnnotationsRaw() {
-       return this.annotations
-              .filter(annotation => annotation.target.type === 'Image')
-              .map(annotation => {
-                if (!this.isPhotoLoaded ||
-                    !this.$refs.memoryImage ||
-                    !annotation.target.id ||
-                    !annotation.target.id.includes('#xywh=')) {
-                      return null;
-                };
-                return annotation;
-              });
-    },
-
     queries() {
       return this.textAnnotations.map(annotation => annotation.target.selector.exact);
     },
@@ -326,60 +243,6 @@ export default {
       });
     },
 
-    rect(annotation) {
-      let imgLink = annotation.target.id;
-      if(!imgLink) {return;};
-      let ratios = imgLink.split("#xywh=");
-      let rectParams = ratios[1].split(',');
-      return {x: rectParams[0], y: rectParams[1], width: rectParams[2], height: rectParams[3]};
-    },
-
-    getAbsoluteRect({rect, imageWidth, imageHeight}) {
-      let {x, y, width, height} = rect;
-      x *= imageWidth;
-      width *= imageWidth;
-      y *= imageHeight;
-      height *= imageHeight;
-      return {x, y, width, height};
-    },
-
-    annoRectChanged(annoRect) {
-      this.annotationImageRectRatio = annoRect;
-      if (!this.$refs.memoryImage) { return ; };
-      const { width: imageWidth, height: imageHeight} = this.$refs.memoryImage.$refs.image.getBoundingClientRect();
-      this.annotationImageRect = this.getAbsoluteRect({
-        rect: this.annotationImageRectRatio,
-        imageWidth,
-        imageHeight,
-      });
-    },
-
-    isInAnnoRect(relPos) {
-      if(!this.isPhotoLoaded || !this) {return;};
-      let commentArray = [];
-      this.imageAnnotationsRaw.forEach(annotation => {
-        const rectangle = this.rect(annotation);
-        const{x: x, y: y, width: width, height: height} = rectangle
-        if (( relPos.xPosition > x &&
-              relPos.xPosition < Number(x) + Number(width)) &&
-              (relPos.yPosition > y &&
-              relPos.yPosition < ( Number(y)+ Number(height)))) {
-               commentArray.push( { comment: annotation.body.value, author: annotation.creator.name});
-            }
-      });
-      this.imageComments = commentArray;
-    },
-
-    getTextAnnotation() {
-      if (window.getSelection) {
-        if (window.getSelection().toString() === ' ') { return; };
-        this.annotatedText = window.getSelection().toString();
-      }
-      else if (document.selection) {
-        this.annotatedText =  document.selection.createRange().text;
-      }
-    },
-
     dateToString(date) {
       return Memory.dateToString(date);
     },
@@ -410,43 +273,10 @@ export default {
 
       await this.getAnnotations();
     },
-
-    clickHandle(e) {
-      try {
-        let s = window.getSelection();
-        var range = s.getRangeAt(0);
-        var node = s.anchorNode;
-
-        while (range.toString().indexOf(' ') != 0 && range.startOffset != 0) {
-            range.setStart(node, (range.startOffset - 1));
-        }
-        range.setStart(node, range.startOffset + 1);
-
-        do {
-            range.setEnd(node, range.endOffset + 1);
-        } while (range.toString().indexOf(' ') == -1 && range.toString().trim() != '' && range.endOffset < range.endContainer.length);
-
-        var str = range.toString().trim();
-        this.clickedText = str;
-      } catch (error) {
-
-      }
-    }
   },
 
 }
 
-  // $(".description").on('contextmenu', function(evt) {
-  //     evt.preventDefault();
-  //     var e = window.event;
-  //     if (e.button == 2) {
-  //         var range = document.caretRangeFromPoint(e.pageX, e.pageY - $(document).scrollTop());
-  //         var selection = window.getSelection();
-  //         selection.removeAllRanges();
-  //         selection.addRange(range);
-  //         jQuery(document.elementFromPoint(e.pageX, e.pageY - $(document).scrollTop())).click();
-  //     }
-  // });
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -458,9 +288,9 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
-  grid-template:  " .     .           .           "  10%
-                  " .     memoryCell  annotations "  auto
-                  / 5%   1fr         256px;
+  grid-template:  " .     .           .  "  5%
+                  " .     memoryCell  .  "  auto
+                  / 5%    1fr         5%;
 }
 
 .memoryCell {
