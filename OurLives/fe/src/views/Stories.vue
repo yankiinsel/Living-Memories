@@ -12,34 +12,34 @@
     </div>
     <div class="memories">
       <ul class="memoryList" id="memoryList">
-        <li class="memoryCell" v-for="memory in filteredMemories" :key="memory.id">
-          <p class="title">{{ memory.title }}</p>
-          <div class="description">
-            {{ memory.description }}
+          <router-link class="memoryCell"
+                     tag="li"
+                     v-for="memory in filteredMemories" :key="memory.id"
+                     :to="{ name: 'StoryDetail', params: { id: memory.id }}">
+            <p class="title">{{ memory.title }}</p>
+              <div class="description">
+                {{ memory.description }}
+                <br>
+                <br>
+                <div v-if="memory.username">
+                  Author: {{ memory.username }}
+                </div>
+                <div v-if="memory.taggedPeople">
+                  People: {{ memory.taggedPeople }}
+                </div>
+                <div v-if="memory.date">
+                  Date: {{ dateToString(memory.date)}}
+                </div>
+                <div v-if="memory.location">
+                  Location: {{memory.location}}
+                </div>
+              </div>
+              <div class="thumbnail">
+                <img v-if="memory.imgUrl" :src="memory.imgUrl"/>
+                <img v-else src= "http://savings.gov.pk/wp-content/plugins/ldd-directory-lite/public/images/noimage.png"/>
+              </div>
             <br>
-            <br>
-            <div v-if="memory.username">
-              Author: {{ memory.username }}
-            </div>
-            <div v-if="memory.taggedPeople">
-              People: {{ memory.taggedPeople }}
-            </div>
-            <div v-if="memory.date">
-              Date: {{ dateToString(memory.date)}}
-            </div>
-            <div v-if="memory.location">
-              Location: {{memory.location}}
-            </div>
-          </div>
-          <div class="thumbnail">
-             <img v-if="memory.imgUrl" :src="memory.imgUrl"/>
-            <img v-else src= "http://savings.gov.pk/wp-content/plugins/ldd-directory-lite/public/images/noimage.png"/>
-          </div>
-          <router-link class="view-details"
-                       :to="{ name: 'StoryDetail', params: { id: memory.id }}">View details
           </router-link>
-          <br>
-        </li>
       </ul>
     </div>
   </div>
@@ -146,11 +146,12 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
 .memoryCell {
   display: grid;
   background-color: #ffffffbb !important;
-  grid-template: " .          .                 .              .                      " 36px
-                 " thumbnail  title             title          .                      " auto
-                 " thumbnail  description       description    .                      " auto
-                 " thumbnail  .                 .              view-details           " 1fr
-                 / auto       1fr               auto           auto;
+  grid-template: "   .     .                 .              .             " 36px
+                 "   .     title             title          .             " auto
+                 "   .     thumbnail         thumbnail      .             " auto
+                 "   .     description       description    .             " auto
+                 "   .     .                 .              .             " 36px
+                 /   36px  1fr               auto           36px;
   text-align: left;
   box-shadow: 4px 4px #00000017;
 }
@@ -170,12 +171,6 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
 .title {
   grid-area: title;
   font-weight: bold;
-}
-.view-details {
-  grid-area: view-details;
-  margin-top: 24px;
-  font-weight: bold;
-  color: #219c69;
 }
 
 .description {

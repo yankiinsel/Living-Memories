@@ -553,13 +553,13 @@ ul.memoryList li p {
   grid-area: inputText;
   margin-top: 12px;
   display: grid;
-  grid-template:  " thumbnail         editTitle        " auto
-                  " thumbnail         editTaggedPeople " auto
+  grid-template:  " editTitle         editTitle        " auto
                   " thumbnail         editImage        " auto
-                  " thumbnail         selectDate       " auto
-                  " thumbnail         editLocation     " 256px
+                  " editTaggedPeople  editTaggedPeople " auto
+                  " selectDate        selectDate       " auto
+                  " editLocation      editLocation     " 256px
                   " editDescription   editDescription  " auto
-                  / 256px             auto;
+                  / auto              1fr             ;
 }
 
 .postMemory {

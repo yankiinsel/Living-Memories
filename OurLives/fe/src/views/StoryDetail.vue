@@ -2,7 +2,7 @@
 <div>
   <div id="Memory">
     <div class="memoryCell">
-        <p class="title">{{ memory.title }}</p>
+        <h3 class="title">{{ memory.title }}</h3>
         <!-- <p v-html="memory.description"> -->
         <div class="description">
           <p :searchWords="queries" class="memory-description">
@@ -34,10 +34,8 @@
           placeholder="Enter your annotation..."
         />
         <div class="thumbnail">
-          <img @photo-loaded="photoLoaded"
-                v-if="memory.imgUrl"
-                :img-url="memory.imgUrl"
-                ref="memoryImage"/>
+          <img  v-if="memory.imgUrl"
+                :src="memory.imgUrl"/>
         </div>
         <br>
     </div>
@@ -219,18 +217,6 @@ export default {
       });
     },
 
-    photoLoaded() {
-      // setInterval is necessary to ensure browser paints
-      // the image, b/c img onload does not take paint into acccount
-      // when being fired;
-      const resetInterval = setInterval(() => {
-        if (this.$refs.memoryImage.$refs) {
-          this.isPhotoLoaded = true;
-          clearInterval(resetInterval);
-        }
-      }, 100);
-    },
-
     async getMemory() {
       await StoryService.getMemory(this.id, (res) => {
             this.memory = res.data[0];
@@ -296,11 +282,12 @@ export default {
 .memoryCell {
   grid-area: memoryCell;
   display: grid;
-  grid-template: " thumbnail  .             .              .             " auto
-                 " thumbnail  title         title          title         " auto
-                 " thumbnail  description   description    description   " auto
-                 " comment    comment       annotate       annotate      " auto
-                 / auto       1fr           auto       auto;
+  grid-template: "   .             .              .             " auto
+                 "   title         title          title         " auto
+                 "   thumbnail     thumbnail      thumbnail     " auto
+                 "   description   description    description   " auto
+                 "   comment       annotate       annotate      " auto
+                 /    1fr          auto           auto;
   text-align: left;
 }
 
@@ -316,12 +303,6 @@ export default {
                 / auto;
 
 }
-
-/*
-.thumbnail img {
-  width: 256px;
-  height: auto;
-} */
 
 .thumbnail {
   grid-area: thumbnail;
