@@ -7,8 +7,7 @@
           <img
             v-else
             src="http://savings.gov.pk/wp-content/plugins/ldd-directory-lite/public/images/noimage.png"
-            style="width:230px; height:auto"
-          >
+            style="width:230px; height:auto">
         </div>
         <b-form-input class="editTitle"
                       type="text"
@@ -71,47 +70,6 @@
                 :disabled="isLoading">{{postButtonName}}
       </b-button>
     </div>
-    <div class="memories">
-      <ul class="memoryList" id="memoryList">
-        <li class="memoryCell" v-for="memory in memories" :key="memory._id">
-          <b-button class="deleteButton"
-                    variant="danger"
-                    @click="deleteMemory(memory.id)">X</b-button>
-          <p class="title">{{ memory.title }}</p>
-          <div class="description">
-            {{ memory.description }}
-            <br>
-            <br>
-            <div v-if="memory.date">
-              Date: {{ getMemoryDate(memory.date)}}
-            </div>
-            <div v-if="memory.taggedPeople">
-              People: {{ memory.taggedPeople }}
-            </div>
-            <div v-if="memory.location">
-              Location: {{ memory.location }}
-            </div>
-            <div v-if="memory.isPublic">Public: {{memory.isPublic}}</div>
-          </div>
-          <div class="thumbnail">
-            <img :src="memory.imgUrl">
-          </div>
-          <router-link
-            class="view-annotations"
-            :to="{ name: 'StoryDetail', params: { id: memory.id }}">
-            View annotations
-          </router-link>
-
-          <div class="thumbnail">
-            <img v-if="memory.imgUrl" :src="memory.imgUrl">
-            <img
-              v-else
-              src="http://savings.gov.pk/wp-content/plugins/ldd-directory-lite/public/images/noimage.png">
-          </div>
-          <br>
-        </li>
-      </ul>
-    </div>
   </div>
 
 </template>
@@ -122,10 +80,14 @@ import Vue from 'vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import datePicker from 'vue-bootstrap-datetimepicker';
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
+import StoryService from '../services/StoryService';
+import Memory from '../models/Memory';
 
 Vue.use(datePicker);
 
 export default {
+  /* eslint-disable no-debugger */
+
   name: 'NewPost',
   // Variables here
   props: ['name'],
@@ -138,7 +100,7 @@ export default {
 
   data() {
     return {
-      memories: [],
+      locs: [],
       searchedKeyword: '',
       uploadedImage:
         'http://img1.vued.vanthink.cn/vued0a233185b6027244f9d43e653227439a.png',
@@ -193,6 +155,20 @@ export default {
   },
 
   computed: {
+
+    memory() {
+      return {
+        description: this.message,
+        title: this.title,
+        imgUrl: this.imgUrl,
+        location: this.locs.toString(),
+        coords: this.coordinates,
+        taggedPeople: this.taggedPeople,
+        username: this.username,
+        date: this.memoryDate,
+        isPublic: true,
+      };
+    },
 
     postButtonName() {
       if (this.isLoading) {
@@ -290,7 +266,6 @@ export default {
     } else {
       this.username = 'anonymous';
     }
-    await this.getAllMemories();
   },
 
   // Methods here
@@ -323,98 +298,33 @@ export default {
       }));
     },
 
-    async getAllMemories() {
-      this.memories = [];
-      if (this.username === 'anonymous') {
-        return;
-      }
-      await axios
-        .get(`${this.baseURL}/memories`, {
-          params: {
-            username: this.username,
-          },
-        })
-        .then((res) => {
-          res.data.forEach((memory) => {
-            this.memories.push({
-              username: memory.username,
-              description: memory.description,
-              imgUrl: memory.imgUrl,
-              taggedPeople: memory.taggedPeople,
-              location: memory.location,
-              coords: memory.coords,
-              date: memory.date,
-              title: memory.title,
-              isPublic: memory.isPublic,
-              id: memory._id,
-            });
-          });
-        });
-    },
-
     getMemoryDate(date) {
-      let a = '';
-      if (!date.year && date.decade) {
-        a = `${date.decade}s`;
-        return a;
-      }
-
-      if (date.year) {
-        a = date.year;
-      }
-
-      if (date.month && date.year) {
-        a = `${date.month} ${a}`;
-      }
-
-      if (date.day && date.month && date.year) {
-        a = `${date.month} ${date.day}th, ${date.year}`;
-      }
-
-      if (date.day && date.month && date.year && date.time) {
-        a = `${date.time}, ${date.month} ${date.day}th, ${date.year}`;
-      }
-      return a;
+      Memory.dateToString(date);
     },
 
     async postMemory() {
       this.isLoading = true;
-      const locations = [];
       const promise1 = new Promise((resolve, reject) => {
         if (this.coordinates) {
           this.coordinates.forEach(async (coordinate) => {
             try {
-              const a = await axios.get(`https://beaver-geocode.now.sh/decode/${coordinate.lat}&${coordinate.lng}`);
-              locations.push(a);
+              const location = await axios.get(`https://beaver-geocode.now.sh/decode/${coordinate.lat}&${coordinate.lng}`);
+              this.locs.push(location);
             } catch (e) {
-              console.log(e);
               this.isLoading = false;
             }
           });
-          setTimeout(resolve, 2000, locations);
+          setTimeout(resolve, 2000, this.locs);
         }
       });
       Promise.all([promise1]).then((values) => {
-        const locs = values[0].filter(value => value.data).map(value => value.data);
-        axios.post(`${this.baseURL}/postMemory`, {
-          description: this.message,
-          title: this.title,
-          imgUrl: this.imgUrl,
-          location: locs.toString(),
-          coords: this.coordinates,
-          taggedPeople: this.taggedPeople,
-          username: this.username,
-          date: this.memoryDate,
-          isPublic: true,
-        })
-          .then(async (response) => {
-            this.getAllMemories();
-            this.isLoading = false;
-          })
-          .catch((error) => {
-            console.log(error);
-            this.isLoading = false;
-          });
+        this.locs = values[0].filter(value => value.data).map(value => value.data);
+        debugger;
+        StoryService.post(this.memory, (res) => {
+          this.isLoading = false;
+        }).catch((error) => {
+          this.isLoading = false;
+        });
       });
     },
 
@@ -429,7 +339,6 @@ export default {
           this.getAllMemories();
         })
         .catch((error) => {
-          console.log(error);
         });
     },
   },

@@ -49,7 +49,6 @@
 import StoryService from '../services/StoryService';
 import Memory from '../models/Memory';
 
-
 export default {
   name: 'Stories',
 
