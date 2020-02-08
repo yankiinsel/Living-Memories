@@ -31,8 +31,7 @@
           class="comment"
           type="text"
           v-model="comment"
-          placeholder="Enter your annotation..."
-        />
+          placeholder="Enter your annotation..."/>
         <div class="thumbnail">
           <img  v-if="memory.imgUrl"
                 :src="memory.imgUrl"/>

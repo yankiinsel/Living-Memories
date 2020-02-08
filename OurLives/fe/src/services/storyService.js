@@ -31,6 +31,21 @@ const StoryService = {
       });
   },
 
+  async delete(id, callback) {
+    await axios
+      .delete(`${this.baseURL}/deleteMemory`, {
+        data: {
+          id,
+        },
+      })
+      .then((res) => {
+        callback(res);
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
+  },
+
 };
 
 export default StoryService;
