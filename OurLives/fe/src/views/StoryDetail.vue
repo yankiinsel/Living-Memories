@@ -14,7 +14,9 @@
           <p v-if="memory.location" class="memory-location">
             {{ 'Location: ' + memory.location }}
           </p>
-          <div class="google-map" :id="mapName"></div>
+          <memory-map :coordinates="coordinates"
+                      :mapName="mapName">
+          </memory-map>
           <p v-if="memory.taggedPeople" class="memory-people">
             {{ 'People: ' + memory.taggedPeople }}
           </p>
@@ -44,10 +46,10 @@
 <script>
 
 import axios from 'axios';
-import $Scriptjs from 'scriptjs';
 import StoryService from './../services/StoryService';
 import AnnotationService from './../services/AnnotationService';
 import Memory from './../models/Memory';
+import MemoryMap from './../components/MemoryMap.vue';
 
 const $ = require('jquery');
 
@@ -59,14 +61,7 @@ export default {
   // Variables here
   props: ['name'],
 
-  mounted() {
-    $Scriptjs('https://maps.googleapis.com/maps/api/js?key=AIzaSyDizCTlHkRUed4C1f2E1dQxOz2Y93qVBZk', () => {
-      this.initMap();
-    });
-  },
-
-  components: {
-  },
+  components: { MemoryMap },
 
   data() {
     return {
@@ -74,16 +69,11 @@ export default {
       annotatedText: '',
       id: '',
       annotations: [],
-      annotationImageRectRatio: {},
-      annotationImageRect: {},
       isPhotoLoaded: false,
-      mapName: `${this.name}-map`,
-      map: null,
-      bounds: null,
-      markers: [],
       comment: '',
       clickedText: '',
       imageComments: [],
+      mapName: `${this.name}-map`,
     };
   },
 
@@ -95,21 +85,6 @@ export default {
   },
 
   // Setters here
-  watch: {
-    /* eslint-disable */
-
-    coordinates() {
-      if (!this.coordinates) { return []; };
-      this.coordinates.forEach((coordinate => {
-          var marker = new google.maps.Marker({
-            position: new google.maps.LatLng(coordinate.lat, coordinate.lng),
-            map: this.map
-          });
-          this.markers.push(marker);
-        }).bind(this));
-      this.centerMap();
-    },
-  },
 
   computed: {
 
@@ -117,43 +92,44 @@ export default {
       if (this.imageComments && this.imageComments.length !== 0) {
         return this.imageComments;
       }
-      if (!this.clickedText || !this.textAnnotations) {return;};
-      this.textAnnotations.forEach(anno => {
-      });
+      if (!this.clickedText || !this.textAnnotations) { return []; }
+      let retval = [];
       try {
-        var a = this.textAnnotations
-                .filter(annotation => annotation.target.selector.exact.includes(this.clickedText))
-                .map(annotation => { return {comment: annotation.body.value, author: annotation.creator.name} });
+        retval = this.textAnnotations
+          .filter(annotation => annotation.target.selector.exact.includes(this.clickedText))
+          .map(annotation => ({ comment: annotation.body.value, author: annotation.creator.name }));
       } catch (e) {
         console.log(e);
       }
-      return a;
+      return retval;
     },
 
     coordinates() {
-        return this.memory.coords;
+      return this.memory.coords;
     },
 
     annotationTextObject() {
       if (!this.annotatedText) {
         return {};
       }
-      let annotationObject = {
-      "@context": "http://www.w3.org/ns/anno.jsonld",
-      // annotationObject = Object.assign({"id":1}, annotationObject);
-      "type": "Annotation",
-      "body": {
-        "type": "TextualBody",
-        "value": this.comment,
-        "format": "text/plain"
-      },
-      "created":new Date().toISOString(),
-      "creator":{"type":"Human","name":sessionStorage["vue-session-key"]?JSON.parse(sessionStorage["vue-session-key"])["session_username"]:"Anonymous"},
-      "generator":{"type":"Software", "name":"TheBeaver", "homepage":window.location.protocol+"//"+window.location.host},
-      "motivation":"tagging",
-      "target":{"source":window.location.protocol+"//"+window.location.host+window.location.pathname,
-                          "selector":{"type": "TextQuoteSelector","exact": this.annotatedText }},
-      }
+      const annotationObject = {
+        '@context': 'http://www.w3.org/ns/anno.jsonld',
+        // annotationObject = Object.assign({"id":1}, annotationObject);
+        type: 'Annotation',
+        body: {
+          type: 'TextualBody',
+          value: this.comment,
+          format: 'text/plain',
+        },
+        created: new Date().toISOString(),
+        creator: { type: 'Human', name: sessionStorage['vue-session-key'] ? JSON.parse(sessionStorage['vue-session-key']).session_username : 'Anonymous' },
+        generator: { type: 'Software', name: 'TheBeaver', homepage: `${window.location.protocol}//${window.location.host}` },
+        motivation: 'tagging',
+        target: {
+          source: `${window.location.protocol}//${window.location.host}${window.location.pathname}`,
+          selector: { type: 'TextQuoteSelector', exact: this.annotatedText },
+        },
+      };
       return annotationObject;
     },
 
@@ -161,23 +137,24 @@ export default {
       if (!this.annotationImageRectRatio) {
         return {};
       }
-      let annotationObject = {
-      "@context": "http://www.w3.org/ns/anno.jsonld",
-        "type": "Annotation",
-        "body": {
-          "type": "TextualBody",
-          "value": this.comment,
-          "format": "text/plain"
+      const annotationObject = {
+        '@context': 'http://www.w3.org/ns/anno.jsonld',
+        type: 'Annotation',
+        body: {
+          type: 'TextualBody',
+          value: this.comment,
+          format: 'text/plain',
         },
-        "created":new Date().toISOString(),
-        "creator":{"type":"Human","name":sessionStorage["vue-session-key"]?JSON.parse(sessionStorage["vue-session-key"])["session_username"]:"Anonymous"},
-        "generator":{"type":"Software", "name":"TheBeaver", "homepage":window.location.protocol+"//"+window.location.host},
-        "motivation":"tagging",
-        "target":{"source":window.location.protocol+"//"+window.location.host+window.location.pathname,
-                  "id": this.memory.imgUrl+"#xywh%3D"+this.imgRatioText,
-                  "type": "Image",
-                  "format": "image/jpeg",
-        }
+        created: new Date().toISOString(),
+        creator: { type: 'Human', name: sessionStorage['vue-session-key'] ? JSON.parse(sessionStorage['vue-session-key']).session_username : 'Anonymous' },
+        generator: { type: 'Software', name: 'TheBeaver', homepage: `${window.location.protocol}//${window.location.host}` },
+        motivation: 'tagging',
+        target: {
+          source: `${window.location.protocol}//${window.location.host}${window.location.pathname}`,
+          id: `${this.memory.imgUrl}#xywh%3D${this.imgRatioText}`,
+          type: 'Image',
+          format: 'image/jpeg',
+        },
       };
       return annotationObject;
     },
@@ -189,41 +166,19 @@ export default {
     queries() {
       return this.textAnnotations.map(annotation => annotation.target.selector.exact);
     },
-   },
-
+  },
 
   // Methods here
   methods: {
 
-    initMap() {
-      this.bounds = new google.maps.LatLngBounds();
-      const element = document.getElementById(this.mapName)
-      let mapCentre = {latitude: 41.015137, longitude: 28.979530}
-      const options = {
-        center: new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude),
-        maxZoom: 15,
-      }
-      const position = new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude);
-      this.map = new google.maps.Map(element, options);
-      this.map.setZoom(10);
-    },
-
-    centerMap() {
-      const bounds = new google.maps.LatLngBounds();
-      this.markers.forEach((coord) => {
-        const position = new google.maps.LatLng(coord.position.lat(), coord.position.lng());
-        this.map.fitBounds(bounds.extend(position))
+    async getMemory() {
+      await StoryService.getMemory(this.id, (res) => {
+        this.memory = res.data[0];
       });
     },
 
-    async getMemory() {
-      await StoryService.getMemory(this.id, (res) => {
-            this.memory = res.data[0];
-        });
-    },
-
     async getAnnotations() {
-      AnnotationService.get(window.location.host+window.location.pathname, () => {
+      AnnotationService.get(window.location.host + window.location.pathname, (res) => {
         this.annotations = res.data;
       });
     },
@@ -233,34 +188,35 @@ export default {
     },
 
     async annotate() {
-
-      this.getTextAnnotation()
+      this.getTextAnnotation();
       if (this.annotationTextObject) {
         const res = await axios.post(
-          `${this.annotationURL}/annotate`, {annotationObject: this.annotationTextObject},
+          `${this.annotationURL}/annotate`, { annotationObject: this.annotationTextObject },
           {
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          });
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        );
       }
 
       if (this.annotationImageObject) {
-        let annotationObject = this.annotationImageObject;
+        const annotationObject = this.annotationImageObject;
         const res = await axios.post(
-          `${this.annotationURL}/annotate`, {annotationObject},
+          `${this.annotationURL}/annotate`, { annotationObject },
           {
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          });
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        );
       }
 
       await this.getAnnotations();
     },
   },
 
-}
+};
 
 </script>
 
@@ -331,12 +287,6 @@ export default {
   grid-area: deleteButton;
 }
 
-.google-map {
-  margin: 15px;
-  background: gray;
-  grid-area: map;
-}
-
 .memory-people {
   margin: 15px;
   grid-area: memory-people;
@@ -370,7 +320,5 @@ export default {
   margin: 15px;
   align-self: start;
 }
-
-
 
 </style>

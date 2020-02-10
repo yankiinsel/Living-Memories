@@ -21,7 +21,11 @@
                       type="text"
                       v-model="imgUrl"
                       placeholder="Image URL"/>
-        <div class="google-map" :id="mapName"></div>
+        <memory-map :coordinates="coordinates"
+                    :editEnabled="true"
+                    @update="updateMemoryLocation"
+                    :mapName="mapName">
+        </memory-map>
         <select-date v-on:update="updateMemoryDate">
         </select-date>
         <b-form-textarea class="editDescription"
@@ -40,14 +44,14 @@
 </template>
 <script>
 import axios from 'axios';
-import $Scriptjs from 'scriptjs';
 import 'bootstrap/dist/css/bootstrap.css';
 import StoryService from '../services/StoryService';
 import Memory from '../models/Memory';
 import SelectDate from '../components/SelectDate.vue';
+import MemoryMap from '../components/MemoryMap.vue';
+
 
 export default {
-  /* eslint-disable no-debugger */
 
   name: 'NewPost',
   // Variables here
@@ -55,12 +59,7 @@ export default {
 
   components: {
     SelectDate,
-  },
-
-  mounted() {
-    $Scriptjs('https://maps.googleapis.com/maps/api/js?key=AIzaSyDizCTlHkRUed4C1f2E1dQxOz2Y93qVBZk', () => {
-      this.initMap();
-    });
+    MemoryMap,
   },
 
   data() {
@@ -77,14 +76,11 @@ export default {
       location: '',
       imgUrl: '',
       taggedPeople: '',
+      mapName: `${this.name}-map`,
       baseURL: 'https://beaver-memories.now.sh',
       secondaryURL: 'https://beaver-annotations.now.sh',
       annotatedText: '',
-      mapName: `${this.name}-map`,
       coordinates: [],
-      map: null,
-      bounds: null,
-      markers: [],
       isLoading: false,
     };
   },
@@ -124,33 +120,6 @@ export default {
 
   // Methods here
   methods: {
-    initMap() {
-      this.bounds = new google.maps.LatLngBounds();
-      const element = document.getElementById(this.mapName);
-      const mapCentre = { latitude: 41.015137, longitude: 28.979530 };
-      const options = {
-        center: new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude),
-      };
-      const position = new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude);
-      this.map = new google.maps.Map(element, options);
-      this.map.setZoom(10);
-      this.map.addListener('click', ((e) => {
-        const latlng = e.latLng;
-        this.coordinates.push({ lat: latlng.lat(), lng: latlng.lng() });
-        const marker = new google.maps.Marker({
-          position: latlng,
-          map: this.map,
-          draggable: true,
-        });
-        marker.addListener('click', ((e) => {
-          const index = this.markers.map(x => x.position.lat())
-            .indexOf(marker.position.lat());
-          this.markers[index].setMap(null);
-          this.markers.splice(index, 1);
-        }));
-        this.markers.push(marker);
-      }));
-    },
 
     getMemoryDate(date) {
       Memory.dateToString(date);
@@ -160,9 +129,13 @@ export default {
       this.memoryDate = value;
     },
 
+    updateMemoryLocation(value) {
+      this.coordinates = value;
+    },
+
     async postMemory() {
       this.isLoading = true;
-      const promise1 = new Promise((resolve, reject) => {
+      const promise1 = new Promise((resolve) => {
         if (this.coordinates) {
           this.coordinates.forEach(async (coordinate) => {
             try {
@@ -175,6 +148,8 @@ export default {
           setTimeout(resolve, 2000, this.locs);
         }
       });
+      // eslint-disable-next-line no-debugger
+      debugger;
       Promise.all([promise1]).then((values) => {
         this.locs = values[0].filter(value => value.data).map(value => value.data);
         StoryService.post(this.memory, () => {
@@ -286,7 +261,7 @@ ul.memoryList li p {
                   " thumbnail         editImage        " auto
                   " editTaggedPeople  editTaggedPeople " auto
                   " selectDate        selectDate       " auto
-                  " editLocation      editLocation     " 256px
+                  " map               map              " 256px
                   " editDescription   editDescription  " auto
                   / auto              1fr             ;
 }
@@ -324,12 +299,5 @@ ul.memoryList li p {
   grid-area: editDescription;
   margin: 15px;
 }
-
-.google-map {
-  margin: 15px;
-  background: gray;
-  grid-area: editLocation;
-}
-
 </style>
 
