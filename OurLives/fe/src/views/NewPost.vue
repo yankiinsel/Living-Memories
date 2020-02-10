@@ -43,9 +43,9 @@
 
 </template>
 <script>
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';
 import StoryService from '../services/StoryService';
+import MapService from '../services/MapService';
 import Memory from '../models/Memory';
 import SelectDate from '../components/SelectDate.vue';
 import MemoryMap from '../components/MemoryMap.vue';
@@ -77,8 +77,6 @@ export default {
       imgUrl: '',
       taggedPeople: '',
       mapName: `${this.name}-map`,
-      baseURL: 'https://beaver-memories.now.sh',
-      secondaryURL: 'https://beaver-annotations.now.sh',
       annotatedText: '',
       coordinates: [],
       isLoading: false,
@@ -139,7 +137,7 @@ export default {
         if (this.coordinates) {
           this.coordinates.forEach(async (coordinate) => {
             try {
-              const location = await axios.get(`https://beaver-geocode.now.sh/decode/${coordinate.lat}&${coordinate.lng}`);
+              const location = MapService.getLocation(coordinate.lat, coordinate.lng);
               this.locs.push(location);
             } catch (e) {
               this.isLoading = false;
