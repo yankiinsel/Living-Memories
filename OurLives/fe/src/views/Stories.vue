@@ -1,13 +1,13 @@
 <template>
   <div id="Stories">
     <div class="searchGroup">
-      <b-input-group size="lg" class="mb-3">
+      <b-input-group size="md" class="mb-3">
         <b-form-input class="searchBar"
                       v-model="searchedKeyword"
                       type="text"
                       placeholder="Search for memories">
         </b-form-input>
-        <b-btn size="lg" variant="success" v-on:click="filterSearch(searchedKeyword)">Go!</b-btn>
+        <b-btn size="md" variant="success" v-on:click="filterSearch(searchedKeyword)">Go!</b-btn>
       </b-input-group>
     </div>
     <div class="memories">
@@ -113,9 +113,26 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
-  grid-template:  ". searchGroup ."  auto
-                  ". memories  ."  auto
-                  / 13% 1fr 13%;
+}
+
+@media (max-width: 700px) {
+  #Stories {
+    grid-template:  ". searchGroup ."  auto
+                    ". memories    ."  auto
+                    / 2% 1fr 2%;
+  }
+}
+
+@media (min-width: 700px) {
+  #Stories {
+    grid-template:  ". searchGroup ."  auto
+                    ". memories    ."  auto
+                    / 13% 1fr 13%;
+  }
+}
+
+.b-form-input {
+  font-size: 9px !important;
 }
 
 .memories {
@@ -145,15 +162,15 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
 .memoryCell {
   display: grid;
   background-color: #ffffffbb !important;
-  grid-template: "   .     .                 .              .             " 36px
-                 "   .     title             title          .             " auto
-                 "   .     thumbnail         thumbnail      .             " auto
-                 "   .     description       description    .             " auto
-                 "   .     .                 .              .             " 36px
-                 /   36px  1fr               auto           36px;
+  grid-template:"   .     title             title          .             " auto
+                "   .     thumbnail         thumbnail      .             " auto
+                "   .     description       description    .             " auto
+                "   .     .                 .              .             " 36px
+                /   36px  1fr               auto           36px;
   text-align: left;
   box-shadow: 4px 4px #00000017;
 }
+
 
 .thumbnail img {
   width: 20vw;

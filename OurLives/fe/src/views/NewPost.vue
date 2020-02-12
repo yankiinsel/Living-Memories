@@ -31,7 +31,7 @@
         <b-form-textarea class="editDescription"
                       type="text"
                       v-model="message"
-                      placeholder="Enter your memory..."/>
+                      placeholder="Enter your story..."/>
       </div>
       <b-button class="postButton"
                 variant="success"
@@ -178,11 +178,26 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
-  grid-template:
-    ". postMemory ." auto
-    ". memories  ." auto
-    / 13% 1fr 13%;
 }
+
+@media (min-width: 700px) {
+  #Post {
+    grid-template:
+      ".     postMemory ." auto
+      ".     memories   ." auto
+      / 13%  1fr        13%;
+  }
+}
+
+@media (max-width: 700px) {
+  #Post {
+    grid-template:
+      ".    postMemory ." auto
+      ".    memories   ." auto
+      /2%   1fr        5%;
+  }
+}
+
 
 .memories {
   display: grid;
@@ -208,20 +223,6 @@ ul.memoryList li {
 ul.memoryList li p {
   margin: 15px;
   display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.memoryCell {
-  background-color: #ffffffbb !important;
-  display: grid;
-  grid-template:
-    " thumbnail  title           .                 .            " auto
-    " thumbnail  description     .                 .            " auto
-    " thumbnail  .               view-annotations  .            " 1fr
-    / auto 1fr auto auto;
-  text-align: left;
-  box-shadow: 3px 3px #0000001c;
 }
 
 .thumbnail img {
@@ -270,7 +271,7 @@ ul.memoryList li p {
   grid-template:
     " inputText  inputText     " auto
     " .          postButton    " auto
-    / auto 128px;
+    / auto       128px;
   margin-bottom: 48px;
 }
 

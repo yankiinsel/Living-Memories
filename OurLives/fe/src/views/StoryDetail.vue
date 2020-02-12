@@ -110,8 +110,7 @@ export default {
 .memoryCell {
   grid-area: memoryCell;
   display: grid;
-  grid-template: "   .             .              .             " auto
-                 "   title         title          title         " auto
+  grid-template: "   title         title          title         " auto
                  "   thumbnail     thumbnail      thumbnail     " auto
                  "   description   description    description   " auto
                  /    1fr          auto           auto;

@@ -74,7 +74,7 @@ export default {
       },
 
       decades: [
-        { key: 'Select a decade', value: null },
+        { key: 'Decade', value: null },
         { key: '1900s', value: 1900 },
         { key: '1910s', value: 1910 },
         { key: '1920s', value: 1920 },
@@ -91,7 +91,7 @@ export default {
       ],
 
       months: [
-        { key: 'Select a month', value: null },
+        { key: 'Month', value: null },
         { key: 'January', value: 'Jan' },
         { key: 'February', value: 'Feb' },
         { key: 'March', value: 'Mar' },
@@ -107,7 +107,7 @@ export default {
       ],
 
       days: [
-        { key: 'Select a day', value: null },
+        { key: 'Day', value: null },
         { key: '1', value: 1 },
         { key: '2', value: 2 },
         { key: '3', value: 3 },
@@ -151,7 +151,7 @@ export default {
 
     years() {
       return [
-        { key: 'Select a year', value: null },
+        { key: 'Year', value: null },
         { key: this.decadesInt, value: this.decadesInt },
         { key: this.decadesInt + 1, value: this.decadesInt + 1 },
         { key: this.decadesInt + 2, value: this.decadesInt + 2 },
