@@ -157,7 +157,8 @@ export default {
     async deleteMemory(id) {
       StoryService.delete(id, () => {
         this.getAllMemories();
-      }).catch((() => {
+      }).catch(((e) => {
+        console.log(e);
       }));
     },
   },
