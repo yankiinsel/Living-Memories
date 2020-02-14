@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { baseURL } from '../common/config';
+import { BaseService } from './BaseService';
 
 const StoryService = {
   async getAllMemories(callback) {
     const url = `${baseURL}/memories`;
-    await axios.get(url)
+    await BaseService.get(url)
       .then((res) => {
         callback(res);
       }).catch((error) => {
@@ -13,7 +13,8 @@ const StoryService = {
   },
 
   async getMemory(id, callback) {
-    await axios.get(`${baseURL}/memory/${id}`)
+    const url = `${baseURL}/memory/${id}`;
+    await BaseService.get(url)
       .then((res) => {
         callback(res);
       }).catch((error) => {
@@ -22,7 +23,8 @@ const StoryService = {
   },
 
   async post(memory, callback) {
-    await axios.post(`${baseURL}/postMemory`, memory)
+    const url = `${baseURL}/postMemory`;
+    await BaseService.post(url, memory)
       .then((res) => {
         callback(res);
       }).catch((error) => {
@@ -31,12 +33,13 @@ const StoryService = {
   },
 
   async delete(id, callback) {
-    await axios
-      .delete(`${this.baseURL}/deleteMemory`, {
-        data: {
-          id,
-        },
-      })
+    const url = `${this.baseURL}/deleteMemory`;
+
+    await BaseService.delete(url, {
+      data: {
+        id,
+      },
+    })
       .then((res) => {
         callback(res);
       })
@@ -44,7 +47,6 @@ const StoryService = {
         throw new Error(error);
       });
   },
-
 };
 
 export default StoryService;
