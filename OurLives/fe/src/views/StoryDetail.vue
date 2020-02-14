@@ -1,5 +1,4 @@
 <template>
-<div>
   <div id="Memory">
     <div class="memoryCell">
         <h3 class="title">{{ memory.title }}</h3>
@@ -32,10 +31,9 @@
         <br>
     </div>
   </div>
-</div>
 </template>
-<script>
 
+<script>
 import StoryService from './../services/StoryService';
 import Memory from './../models/Memory';
 import MemoryMap from './../components/MemoryMap.vue';
@@ -46,8 +44,9 @@ window.$ = $;
 require('jquery-confirm');
 
 export default {
+
   name: 'StoryDetail',
-  // Variables here
+
   props: ['name'],
 
   components: { MemoryMap },
@@ -62,13 +61,10 @@ export default {
     };
   },
 
-  // On Create here
   async created() {
     this.id = this.$attrs.id;
     await this.getMemory();
   },
-
-  // Setters here
 
   computed: {
     coordinates() {
@@ -76,7 +72,6 @@ export default {
     },
   },
 
-  // Methods here
   methods: {
 
     async getMemory() {
@@ -90,12 +85,9 @@ export default {
     },
   },
 };
-
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 #Memory {
   display: grid;
   width: 100%;
@@ -174,5 +166,4 @@ export default {
   margin: 15px;
   grid-area: memory-username;
 }
-
 </style>

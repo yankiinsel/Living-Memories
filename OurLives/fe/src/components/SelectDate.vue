@@ -1,46 +1,46 @@
 <template>
-    <div class="selectDate">
-      <b-form-select class="selectDecade" v-model="decadesInt" v-on:change="update">
-        <option v-for="decade in decades"
-                :value="decade.value"
-                :key="decade.value">
-                  {{ decade.key }}
-        </option>
-      </b-form-select>
-      <b-form-select class="selectYear"
-                     :disabled="!decadesInt"
-                     v-model="yearsInt"
-                     v-on:change="update">
-        <option v-for="year in years"
-                :value="year.value"
-                :key="year.value">
-                  {{ year.key }}
-        </option>
-      </b-form-select>
-      <b-form-select class="selectMonth" :disabled="!yearsInt" v-model="monthString"
-       v-on:change="update">
-        <option v-for="month in months"
-                :value="month.value"
-                v-bind:key="month.value">
-                  {{ month.key }}
-        </option>
-      </b-form-select>
-      <b-form-select class="selectDay" :disabled="!monthString || !yearsInt " v-model="dayInt"
-       v-on:change="update">
-        <option v-for="day in days"
-                :value="day.value"
-                v-bind:key="day.value">
-                {{ day.key }}
-        </option>
-      </b-form-select>
-      <div class="selectTime">
-        <date-picker  :disabled="!monthString || !yearsInt || !dayInt"
-                      v-model="timeString"
-                      v-on:dp-change="update"
-                      :config="options">
-        </date-picker>
-      </div>
+  <div class="selectDate">
+    <b-form-select class="selectDecade" v-model="decadesInt" v-on:change="update">
+      <option v-for="decade in decades"
+              :value="decade.value"
+              :key="decade.value">
+                {{ decade.key }}
+      </option>
+    </b-form-select>
+    <b-form-select class="selectYear"
+                    :disabled="!decadesInt"
+                    v-model="yearsInt"
+                    v-on:change="update">
+      <option v-for="year in years"
+              :value="year.value"
+              :key="year.value">
+                {{ year.key }}
+      </option>
+    </b-form-select>
+    <b-form-select class="selectMonth" :disabled="!yearsInt" v-model="monthString"
+      v-on:change="update">
+      <option v-for="month in months"
+              :value="month.value"
+              v-bind:key="month.value">
+                {{ month.key }}
+      </option>
+    </b-form-select>
+    <b-form-select class="selectDay" :disabled="!monthString || !yearsInt " v-model="dayInt"
+      v-on:change="update">
+      <option v-for="day in days"
+              :value="day.value"
+              v-bind:key="day.value">
+              {{ day.key }}
+      </option>
+    </b-form-select>
+    <div class="selectTime">
+      <date-picker  :disabled="!monthString || !yearsInt || !dayInt"
+                    v-model="timeString"
+                    v-on:dp-change="update"
+                    :config="options">
+      </date-picker>
     </div>
+  </div>
 </template>
 
 <script>
@@ -52,10 +52,8 @@ import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 Vue.use(datePicker);
 
 export default {
-  /* eslint-disable no-debugger */
 
   name: 'SelectDate',
-  // Variables here
 
   data() {
     return {
@@ -148,7 +146,6 @@ export default {
   },
 
   computed: {
-
     years() {
       return [
         { key: 'Year', value: null },
@@ -181,11 +178,9 @@ export default {
       this.$emit('update', this.memoryDate);
     },
   },
-
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .selectDecade {
   grid-area: selectDecade;
@@ -224,6 +219,5 @@ export default {
   grid-template: " selectDecade selectYear selectMonth selectDay selectTime" auto
                   /1fr          1fr        1fr         1fr       1fr;
 }
-
 </style>
 

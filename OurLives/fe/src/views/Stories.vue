@@ -50,6 +50,7 @@ import StoryService from '../services/StoryService';
 import Memory from '../models/Memory';
 
 export default {
+
   name: 'Stories',
 
   data() {
@@ -68,13 +69,12 @@ export default {
       return this.memories.filter(memory =>
         JSON.stringify(memory).toLowerCase().includes(this.searchedKeyword.toLowerCase()));
     },
-
   },
 
   methods: {
+
     async prepareMemories() {
       this.memories = [];
-
       // Get the memories to be shown from the API
       await StoryService.getAllMemories((res) => {
         res.data.forEach((memory) => {
@@ -99,13 +99,10 @@ export default {
       return Memory.dateToString(date);
     },
   },
-
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 #Stories {
   display: grid;
   background-image: linear-gradient(to top,#f7e3d888 , #ced7f088);
@@ -171,7 +168,6 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
   box-shadow: 4px 4px #00000017;
 }
 
-
 .thumbnail img {
   width: 20vw;
   height: auto;
@@ -210,5 +206,4 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
 .searchBar {
   margin-right: 8px;
 }
-
 </style>

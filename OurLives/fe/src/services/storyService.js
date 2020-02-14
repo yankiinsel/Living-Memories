@@ -2,7 +2,6 @@ import axios from 'axios';
 import { baseURL } from '../common/config';
 
 const StoryService = {
-
   async getAllMemories(callback) {
     const url = `${baseURL}/memories`;
     await axios.get(url)

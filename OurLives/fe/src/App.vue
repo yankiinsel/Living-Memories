@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-     <!-- As a heading -->
     <b-navbar class="navbar border-primary border-bottom">
         <router-link to="/" tag="div">
         <img src="./assets/logo-transparent.png" class="logo" alt="beaver">
@@ -18,7 +17,6 @@
 </template>
 
 <style scoped>
-
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -36,7 +34,6 @@
 .links a.router-link-exact-active {
   color: #e6da70;
 }
-
 
 h3 {
   margin: 40px 0 0;

@@ -40,8 +40,8 @@
       </b-button>
     </div>
   </div>
-
 </template>
+
 <script>
 import 'bootstrap/dist/css/bootstrap.css';
 import StoryService from '../services/StoryService';
@@ -50,13 +50,11 @@ import Memory from '../models/Memory';
 import SelectDate from '../components/SelectDate.vue';
 import MemoryMap from '../components/MemoryMap.vue';
 
-
 export default {
 
   name: 'NewPost',
-  // Variables here
-  props: ['name'],
 
+  props: ['name'],
   components: {
     SelectDate,
     MemoryMap,
@@ -84,7 +82,6 @@ export default {
   },
 
   computed: {
-
     memory() {
       return {
         description: this.message,
@@ -118,7 +115,6 @@ export default {
 
   // Methods here
   methods: {
-
     getMemoryDate(date) {
       Memory.dateToString(date);
     },
@@ -143,11 +139,11 @@ export default {
               this.isLoading = false;
             }
           });
+
           setTimeout(resolve, 2000, this.locs);
         }
       });
-      // eslint-disable-next-line no-debugger
-      debugger;
+
       Promise.all([promise1]).then((values) => {
         this.locs = values[0].filter(value => value.data).map(value => value.data);
         StoryService.post(this.memory, () => {
@@ -161,15 +157,13 @@ export default {
     async deleteMemory(id) {
       StoryService.delete(id, () => {
         this.getAllMemories();
-      })
-        .catch((() => {
-        }));
+      }).catch((() => {
+      }));
     },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #Post {
   display: grid;
@@ -197,7 +191,6 @@ export default {
       /2%   1fr        5%;
   }
 }
-
 
 .memories {
   display: grid;
@@ -267,12 +260,12 @@ ul.memoryList li p {
 
 .postMemory {
   grid-area: postMemory;
+  margin-bottom: 48px;
   display: grid;
   grid-template:
     " inputText  inputText     " auto
     " .          postButton    " auto
     / auto       128px;
-  margin-bottom: 48px;
 }
 
 .postButton {
