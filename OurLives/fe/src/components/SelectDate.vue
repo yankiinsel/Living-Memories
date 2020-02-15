@@ -1,6 +1,7 @@
 <template>
   <div class="selectDate">
-    <b-form-select class="selectDecade" v-model="decadesInt" v-on:change="update">
+    <b-form-select class="selectDecade"
+                   v-model="decadesInt">
       <option v-for="decade in decades"
               :value="decade.value"
               :key="decade.value">
@@ -8,25 +9,25 @@
       </option>
     </b-form-select>
     <b-form-select class="selectYear"
-                    :disabled="!decadesInt"
-                    v-model="yearsInt"
-                    v-on:change="update">
+                   :disabled="!decadesInt"
+                   v-model="yearsInt">
       <option v-for="year in years"
               :value="year.value"
               :key="year.value">
                 {{ year.key }}
       </option>
     </b-form-select>
-    <b-form-select class="selectMonth" :disabled="!yearsInt" v-model="monthString"
-      v-on:change="update">
+    <b-form-select class="selectMonth"
+                   :disabled="!yearsInt"
+                   v-model="monthString">
       <option v-for="month in months"
               :value="month.value"
               v-bind:key="month.value">
                 {{ month.key }}
       </option>
     </b-form-select>
-    <b-form-select class="selectDay" :disabled="!monthString || !yearsInt " v-model="dayInt"
-      v-on:change="update">
+    <b-form-select class="selectDay"
+                   :disabled="!monthString || !yearsInt " v-model="dayInt">
       <option v-for="day in days"
               :value="day.value"
               v-bind:key="day.value">
@@ -36,7 +37,6 @@
     <div class="selectTime">
       <date-picker  :disabled="!monthString || !yearsInt || !dayInt"
                     v-model="timeString"
-                    v-on:dp-change="update"
                     :config="options">
       </date-picker>
     </div>
@@ -145,6 +145,12 @@ export default {
     };
   },
 
+  watch: {
+    memoryDate() {
+      this.$emit('update', this.memoryDate);
+    },
+  },
+
   computed: {
     years() {
       return [
@@ -170,12 +176,6 @@ export default {
         day: this.dayInt,
         time: this.timeString,
       };
-    },
-  },
-
-  methods: {
-    update() {
-      this.$emit('update', this.memoryDate);
     },
   },
 };

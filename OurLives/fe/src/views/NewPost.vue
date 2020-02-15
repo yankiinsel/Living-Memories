@@ -143,23 +143,15 @@ export default {
           setTimeout(resolve, 2000, this.locs);
         }
       });
-
       Promise.all([promise1]).then((values) => {
         this.locs = values[0].filter(value => value.data).map(value => value.data);
         StoryService.post(this.memory, () => {
           this.isLoading = false;
+          this.$router.push({ name: 'Stories' });
         }).catch(() => {
           this.isLoading = false;
         });
       });
-    },
-
-    async deleteMemory(id) {
-      StoryService.delete(id, () => {
-        this.getAllMemories();
-      }).catch(((e) => {
-        console.log(e);
-      }));
     },
   },
 };

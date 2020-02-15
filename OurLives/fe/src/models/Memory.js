@@ -1,4 +1,5 @@
 const Memory = {
+
   dateToString(date) {
     let retval = '';
 

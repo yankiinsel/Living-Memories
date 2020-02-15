@@ -1,5 +1,5 @@
+import BaseService from './BaseService';
 import { baseURL } from '../common/config';
-import { BaseService } from './BaseService';
 
 const StoryService = {
   async getAllMemories(callback) {
