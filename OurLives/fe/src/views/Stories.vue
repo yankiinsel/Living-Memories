@@ -5,12 +5,12 @@
         <b-form-input class="searchBar"
                       v-model="searchedKeyword"
                       type="text"
-                      placeholder="Search for memories">
+                      placeholder="Search for stories">
         </b-form-input>
         <b-btn size="md" variant="success" v-on:click="filterSearch(searchedKeyword)">Go!</b-btn>
       </b-input-group>
     </div>
-    <story-card :filteredMemories="filteredMemories"></story-card>
+    <story-card :filteredStories="filteredStories"></story-card>
   </div>
 </template>
 
@@ -28,41 +28,41 @@ export default {
 
   data() {
     return {
-      memories: [],
+      stories: [],
       searchedKeyword: '',
     };
   },
 
   created() {
-    this.prepareMemories();
+    this.prepareStories();
   },
 
   computed: {
-    filteredMemories() {
-      return this.memories.filter(memory =>
-        JSON.stringify(memory).toLowerCase().includes(this.searchedKeyword.toLowerCase()));
+    filteredStories() {
+      return this.stories.filter(story =>
+        JSON.stringify(story).toLowerCase().includes(this.searchedKeyword.toLowerCase()));
     },
   },
 
   methods: {
 
-    async prepareMemories() {
-      this.memories = [];
-      // Get the memories to be shown from the API
-      await StoryService.getAllMemories((res) => {
-        res.data.forEach((memory) => {
-          this.memories.push({
-            title: memory.title,
-            description: memory.description,
-            location: memory.location,
-            coords: memory.coords,
-            taggedPeople: memory.taggedPeople,
-            username: memory.username,
-            isPublic: memory.isPublic,
-            date: memory.date,
-            imgUrl: memory.imgUrl,
+    async prepareStories() {
+      this.stories = [];
+      // Get the stories to be shown from the API
+      await StoryService.getAllStories((res) => {
+        res.data.forEach((story) => {
+          this.stories.push({
+            title: story.title,
+            description: story.description,
+            location: story.location,
+            coords: story.coords,
+            taggedPeople: story.taggedPeople,
+            username: story.username,
+            isPublic: story.isPublic,
+            date: story.date,
+            imgUrl: story.imgUrl,
             // eslint-disable-next-line
-            id: memory._id,
+            id: story._id,
           });
         });
       });
@@ -74,7 +74,7 @@ export default {
 <style scoped>
 #Stories {
   display: grid;
-  background-image: linear-gradient(to top,#f7e3d888 , #ced7f088);
+  background-image: linear-gradient(to top,#ced7f088 , #ced7f088);
   width: 100%;
   height: 100%;
   justify-content: center;
@@ -84,7 +84,7 @@ export default {
 @media (max-width: 700px) {
   #Stories {
     grid-template:  ". searchGroup ."  auto
-                    ". memories    ."  auto
+                    ". stories    ."  auto
                     / 2% 1fr 2%;
   }
 }
@@ -92,7 +92,7 @@ export default {
 @media (min-width: 700px) {
   #Stories {
     grid-template:  ". searchGroup ."  auto
-                    ". memories    ."  auto
+                    ". stories    ."  auto
                     / 13% 1fr 13%;
   }
 }
@@ -100,7 +100,6 @@ export default {
 .b-form-input {
   font-size: 9px !important;
 }
-
 
 .username {
   grid-row-start: username;

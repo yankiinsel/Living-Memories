@@ -1,4 +1,4 @@
-const Memory = {
+const Story = {
 
   dateToString(date) {
     let retval = '';
@@ -33,4 +33,4 @@ const Memory = {
   },
 };
 
-export default Memory;
+export default Story;

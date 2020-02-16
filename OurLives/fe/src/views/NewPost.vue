@@ -1,13 +1,9 @@
 <template>
   <div id="Post">
-    <div class="postMemory">
+    <div class="postStory">
       <div class="inputText">
         <div class="thumbnail">
-          <img v-if="imgUrl" :src="imgUrl" style="width:230px; height:auto">
-          <img
-            v-else
-            src="http://savings.gov.pk/wp-content/plugins/ldd-directory-lite/public/images/noimage.png"
-            style="width:230px; height:auto">
+          <img v-if="imgUrl" :src="imgUrl">
         </div>
         <b-form-input class="editTitle"
                       type="text"
@@ -21,12 +17,12 @@
                       type="text"
                       v-model="imgUrl"
                       placeholder="Image URL"/>
-        <memory-map :coordinates="coordinates"
+        <story-map :coordinates="coordinates"
                     :editEnabled="true"
-                    @update="updateMemoryLocation"
+                    @update="updateStoryLocation"
                     :mapName="mapName">
-        </memory-map>
-        <select-date v-on:update="updateMemoryDate">
+        </story-map>
+        <select-date v-on:update="updateStoryDate">
         </select-date>
         <b-form-textarea class="editDescription"
                       type="text"
@@ -35,7 +31,7 @@
       </div>
       <b-button class="postButton"
                 variant="success"
-                v-on:click="postMemory"
+                v-on:click="postStory"
                 :disabled="isLoading">{{postButtonName}}
       </b-button>
     </div>
@@ -46,9 +42,9 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import StoryService from '../services/StoryService';
 import MapService from '../services/MapService';
-import Memory from '../models/Memory';
+import Story from '../models/Story';
 import SelectDate from '../components/SelectDate.vue';
-import MemoryMap from '../components/MemoryMap.vue';
+import StoryMap from '../components/StoryMap.vue';
 
 export default {
 
@@ -57,7 +53,7 @@ export default {
   props: ['name'],
   components: {
     SelectDate,
-    MemoryMap,
+    StoryMap,
   },
 
   data() {
@@ -70,7 +66,7 @@ export default {
       title: '',
       isPublic: '',
       username: '',
-      memoryDate: '',
+      storyDate: '',
       location: '',
       imgUrl: '',
       taggedPeople: '',
@@ -82,7 +78,7 @@ export default {
   },
 
   computed: {
-    memory() {
+    story() {
       return {
         description: this.message,
         title: this.title,
@@ -91,7 +87,7 @@ export default {
         coords: this.coordinates,
         taggedPeople: this.taggedPeople,
         username: this.username,
-        date: this.memoryDate,
+        date: this.storyDate,
         isPublic: true,
       };
     },
@@ -115,19 +111,19 @@ export default {
 
   // Methods here
   methods: {
-    getMemoryDate(date) {
-      Memory.dateToString(date);
+    getStoryDate(date) {
+      Story.dateToString(date);
     },
 
-    updateMemoryDate(value) {
-      this.memoryDate = value;
+    updateStoryDate(value) {
+      this.storyDate = value;
     },
 
-    updateMemoryLocation(value) {
+    updateStoryLocation(value) {
       this.coordinates = value;
     },
 
-    async postMemory() {
+    async postStory() {
       this.isLoading = true;
       const promise1 = new Promise((resolve) => {
         if (this.coordinates) {
@@ -145,7 +141,7 @@ export default {
       });
       Promise.all([promise1]).then((values) => {
         this.locs = values[0].filter(value => value.data).map(value => value.data);
-        StoryService.post(this.memory, () => {
+        StoryService.post(this.story, () => {
           this.isLoading = false;
           this.$router.push({ name: 'Stories' });
         }).catch(() => {
@@ -161,17 +157,12 @@ export default {
 #Post {
   display: grid;
   background-image: linear-gradient(to top, #f7e3d888, #ced7f088);
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
 }
 
 @media (min-width: 700px) {
   #Post {
     grid-template:
-      ".     postMemory ." auto
-      ".     memories   ." auto
+      ".     postStory  ." auto
       / 13%  1fr        13%;
   }
 }
@@ -179,81 +170,58 @@ export default {
 @media (max-width: 700px) {
   #Post {
     grid-template:
-      ".    postMemory ." auto
-      ".    memories   ." auto
-      /2%   1fr        5%;
+      ".    postStory  ." auto
+      /5%   1fr        5%;
   }
-}
-
-.memories {
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  grid-area: memories;
-  grid-template:
-    " memoryList " auto
-    / 1fr;
-}
-
-.memoryList {
-  display: grid;
-  grid-area: memoryList;
-  grid-auto-rows: auto;
-  grid-gap: 20px;
-}
-
-ul.memoryList li {
-  padding: 8px;
-}
-
-ul.memoryList li p {
-  margin: 15px;
-  display: block;
-}
-
-.thumbnail img {
-  width: 20vw;
-  height: auto;
-  padding: 16px;
 }
 
 .thumbnail {
   grid-area: thumbnail;
   overflow: hidden;
-  object-fit: cover;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  margin: auto;
+  max-height: 256px;
+  object-fit: contain;
 }
 
 .title {
+  margin-top: 8px;
+  margin-bottom: 8px;
   grid-area: title;
   font-weight: bold;
 }
 
 .description {
   grid-area: description;
-  margin-top: 10px;
 }
 
 .view-annotations {
   grid-area: view-annotations;
-  bottom: 10px;
 }
 
 .inputText {
   grid-area: inputText;
-  margin-top: 12px;
+  margin:15px;
   display: grid;
-  grid-template:  " editTitle         editTitle        " auto
-                  " thumbnail         editImage        " auto
-                  " editTaggedPeople  editTaggedPeople " auto
-                  " selectDate        selectDate       " auto
-                  " map               map              " 256px
-                  " editDescription   editDescription  " auto
-                  / auto              1fr             ;
+  grid-template:  " editTitle        " auto
+                  " editImage        " auto
+                  " thumbnail        " auto
+                  " editTaggedPeople " auto
+                  " selectDate       " auto
+                  " map              " 256px
+                  " editDescription  " auto
+                  / 1fr             ;
 }
 
-.postMemory {
-  grid-area: postMemory;
-  margin-bottom: 48px;
+.postStory {
+  grid-area: postStory;
   display: grid;
   grid-template:
     " inputText  inputText     " auto
@@ -262,27 +230,33 @@ ul.memoryList li p {
 }
 
 .postButton {
+  margin: 8px;
   grid-area: postButton;
 }
 
 .editTitle {
+  margin-top: 8px;
+  margin-bottom: 8px;
   grid-area: editTitle;
-  margin: 15px;
 }
 
 .editImage {
+  margin-top: 8px;
+  margin-bottom: 8px;
   grid-area: editImage;
-  margin: 15px;
 }
 
 .editTaggedPeople {
+  margin-top: 8px;
+  margin-bottom: 8px;
   grid-area: editTaggedPeople;
-  margin: 15px;
 }
 
 .editDescription {
+  margin-top: 8px;
+  margin-bottom: 8px;
   grid-area: editDescription;
-  margin: 15px;
 }
+
 </style>
 

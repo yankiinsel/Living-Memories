@@ -1,31 +1,30 @@
 <template>
-  <div class="memories">
-    <ul class="memoryList" id="memoryList">
-      <router-link class="memoryCell"
+  <div class="stories">
+    <ul class="storyList" id="storyList">
+      <router-link class="storyCell"
                     tag="li"
-                    v-for="memory in filteredMemories" :key="memory.id"
-                    :to="{ name: 'StoryDetail', params: { id: memory.id }}">
-        <p class="title">{{ memory.title }}</p>
+                    v-for="story in filteredStories" :key="story.id"
+                    :to="{ name: 'StoryDetail', params: { id: story.id }}">
+        <h3 class="title">{{ story.title }}</h3>
         <div class="description">
-          {{ memory.description }}
+          {{ story.description }}
           <br>
           <br>
-          <div v-if="memory.username">
-            Author: {{ memory.username }}
+          <div v-if="story.username">
+            Author: {{ story.username }}
           </div>
-          <div v-if="memory.taggedPeople">
-            People: {{ memory.taggedPeople }}
+          <div v-if="story.taggedPeople">
+            People: {{ story.taggedPeople }}
           </div>
-          <div v-if="memory.date">
-            Date: {{ dateToString(memory.date)}}
+          <div v-if="story.date">
+            Date: {{ dateToString(story.date)}}
           </div>
-          <div v-if="memory.location">
-            Location: {{memory.location}}
+          <div v-if="story.location">
+            Location: {{story.location}}
           </div>
         </div>
         <div class="thumbnail">
-          <img v-if="memory.imgUrl" :src="memory.imgUrl"/>
-          <img v-else src= "http://savings.gov.pk/wp-content/plugins/ldd-directory-lite/public/images/noimage.png"/>
+          <img v-if="story.imgUrl" :src="story.imgUrl"/>
         </div>
         <br>
       </router-link>
@@ -34,50 +33,48 @@
 </template>
 
 <script>
-import Memory from '../models/Memory';
+import Story from '../models/Story';
 
 export default {
 
   name: 'StoryCard',
 
-  props: ['filteredMemories'],
+  props: ['filteredStories'],
 
   methods: {
     dateToString(date) {
-      return Memory.dateToString(date);
+      return Story.dateToString(date);
     },
   },
 };
 </script>
 
 <style scoped>
-.memories {
+.stories {
   display: grid;
-  justify-content: center;
-  align-items: center;
-  grid-area: memories;
-  grid-template:  " memoryList " auto
+  justify-content: left;
+  align-items: left;
+  grid-area: stories;
+  grid-template:  " storyList " auto
                   / 1fr;
 }
 
-.memoryList {
+.storyList {
   display: grid;
-  grid-area: memoryList;
+  grid-area: storyList;
   grid-auto-rows: auto;
   grid-gap: 20px;
   padding-left: 0;
 }
 
-ul.memoryList li {
+ul.storyList li {
   padding: 8px;
   background-color: #ffffff00;
 }
 
-ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
-
-.memoryCell {
+.storyCell {
   display: grid;
-  background-color: #ffffffbb !important;
+  background-color: #ffffff !important;
   grid-template:"   .     title             title          .             " auto
                 "   .     thumbnail         thumbnail      .             " auto
                 "   .     description       description    .             " auto
@@ -89,23 +86,24 @@ ul.memoryList li p { margin: 24px; display: block; width: 100%; height: 100%; }
 
 .description {
   grid-area: description;
-  margin-top: 24px;
+  margin-top: 12px;
 }
 
 .thumbnail img {
-  width: 20vw;
-  height: auto;
-  margin: 24px;
+  height: 100%;
+  width: auto;
+  max-height: 256px;
+  object-fit: contain;
 }
 
 .thumbnail {
   grid-area: thumbnail;
   overflow: hidden;
-  object-fit: cover;
  }
 
 .title {
   grid-area: title;
   font-weight: bold;
+  margin-top: 12px;
 }
 </style>

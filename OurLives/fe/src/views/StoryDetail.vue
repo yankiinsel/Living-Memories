@@ -1,42 +1,38 @@
 <template>
-  <div id="Memory">
-    <div class="memoryCell">
-        <h3 class="title">{{ memory.title }}</h3>
-        <!-- <p v-html="memory.description"> -->
-        <div class="description">
-          <p class="memory-description">
-            {{ memory.description }}
-          </p>
-          <p v-if="memory.username" class="memory-username">
-            {{ 'Author: ' + memory.username }}
-          </p>
-          <p v-if="memory.location" class="memory-location">
-            {{ 'Location: ' + memory.location }}
-          </p>
-          <memory-map :coordinates="coordinates"
-                      :mapName="mapName">
-          </memory-map>
-          <p v-if="memory.taggedPeople" class="memory-people">
-            {{ 'People: ' + memory.taggedPeople }}
-          </p>
-          <p v-if="memory.date" class="memory-time">
-            {{ 'Date: ' + dateToString(memory.date) }}
-          </p>
-        </div>
-        <!-- </p> -->
-        <div class="thumbnail">
-          <img  v-if="memory.imgUrl"
-                :src="memory.imgUrl"/>
-        </div>
-        <br>
+  <div class="story-detail">
+    <h3 class="title">{{ story.title }}</h3>
+    <div class="description">
+      <p class="story-description">
+        {{ story.description }}
+      </p>
+      <p v-if="story.username" class="story-username">
+        {{ 'Author: ' + story.username }}
+      </p>
+      <p v-if="story.location" class="story-location">
+        {{ 'Location: ' + story.location }}
+      </p>
+      <story-map :coordinates="coordinates"
+                 :mapName="mapName">
+      </story-map>
+      <p v-if="story.taggedPeople" class="story-people">
+        {{ 'People: ' + story.taggedPeople }}
+      </p>
+      <p v-if="story.date" class="story-time">
+        {{ 'Date: ' + dateToString(story.date) }}
+      </p>
     </div>
+    <div class="thumbnail">
+      <img  v-if="story.imgUrl"
+            :src="story.imgUrl"/>
+    </div>
+    <br>
   </div>
 </template>
 
 <script>
 import StoryService from './../services/StoryService';
-import Memory from './../models/Memory';
-import MemoryMap from './../components/MemoryMap.vue';
+import Story from './../models/Story';
+import StoryMap from './../components/StoryMap.vue';
 
 const $ = require('jquery');
 
@@ -49,11 +45,11 @@ export default {
 
   props: ['name'],
 
-  components: { MemoryMap },
+  components: { StoryMap },
 
   data() {
     return {
-      memory: {},
+      story: {},
       id: '',
       isPhotoLoaded: false,
       clickedText: '',
@@ -63,62 +59,68 @@ export default {
 
   async created() {
     this.id = this.$attrs.id;
-    await this.getMemory();
+    await this.getStory();
   },
 
   computed: {
     coordinates() {
-      return this.memory.coords;
+      return this.story.coords;
     },
   },
 
   methods: {
 
-    async getMemory() {
-      await StoryService.getMemory(this.id, (res) => {
-        this.memory = res.data[0];
+    async getStory() {
+      await StoryService.getStory(this.id, (res) => {
+        // eslint-disable-next-line prefer-destructuring
+        this.story = res.data[0];
       });
     },
 
     dateToString(date) {
-      return Memory.dateToString(date);
+      return Story.dateToString(date);
     },
   },
 };
 </script>
 
 <style scoped>
-#Memory {
+.story-detail {
   display: grid;
+  text-align: left;
   width: 100%;
   height: 100%;
-  justify-content: center;
-  align-items: center;
-  grid-template:  " .     .           .  "  5%
-                  " .     memoryCell  .  "  auto
-                  / 5%    1fr         5%;
+
 }
 
-.memoryCell {
-  grid-area: memoryCell;
-  display: grid;
-  grid-template: "   title         title          title         " auto
-                 "   thumbnail     thumbnail      thumbnail     " auto
-                 "   description   description    description   " auto
-                 /    1fr          auto           auto;
-  text-align: left;
+@media (min-width: 700px) {
+  .story-detail {
+    grid-template: ".   title        ." auto
+                   ".   thumbnail    ." auto
+                   ".   description  ." auto
+                   /13%   1fr        13%;
+  }
+}
+
+@media (max-width: 700px) {
+  .story-detail {
+    grid-template: ".   title        ." auto
+                   ".   thumbnail    ." auto
+                   ".   description  ." auto
+                   /2%   1fr         2%;
+  }
 }
 
 .description {
   grid-area: description;
   display: grid;
-  grid-template: "memory-description" auto
-                 "memory-username"  auto
-                 "memory-people"  auto
-                 "memory-location"  auto
+  grid-template: "story-description" auto
+                 "story-username"  auto
+                 "story-people"  auto
+                 "story-location"  auto
                  "map"  256px
-                 "memory-time"  auto
-                / auto;
+                 "story-time"  auto
+                / 1fr;
 
 }
 
@@ -126,44 +128,46 @@ export default {
   grid-area: thumbnail;
   overflow: hidden;
   object-fit: cover;
-  margin: 16px;
+  margin: 8px;
  }
 
 .title {
   grid-area: title;
   font-weight: bold;
-  margin: 15px;
+  margin: 8px;
 }
 
 .description {
   grid-area: description;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .deleteButton {
   grid-area: deleteButton;
 }
 
-.memory-people {
-  margin: 15px;
-  grid-area: memory-people;
+.story-people {
+  margin: 8px;
+  grid-area: story-people;
 }
 
-.memory-description {
-  margin: 15px;
-  grid-area: memory-description;
+.story-description {
+  margin: 8px;
+  grid-area: story-description;
 }
 
-.memory-time {
-  margin: 15px;
-  grid-area: memory-time;
+.story-time {
+  margin: 8px;
+  grid-area: story-time;
 }
-.memory-location {
-  margin: 15px;
-  grid-area: memory-location;
+
+.story-location {
+  margin: 8px;
+  grid-area: story-location;
 }
-.memory-username {
-  margin: 15px;
-  grid-area: memory-username;
+
+.story-username {
+  margin: 8px;
+  grid-area: story-username;
 }
 </style>

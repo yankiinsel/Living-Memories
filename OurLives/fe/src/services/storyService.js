@@ -2,7 +2,7 @@ import BaseService from './BaseService';
 import { baseURL } from '../common/config';
 
 const StoryService = {
-  async getAllMemories(callback) {
+  async getAllStories(callback) {
     const url = `${baseURL}/memories`;
     await BaseService.get(url)
       .then((res) => {
@@ -12,7 +12,7 @@ const StoryService = {
       });
   },
 
-  async getMemory(id, callback) {
+  async getStory(id, callback) {
     const url = `${baseURL}/memory/${id}`;
     await BaseService.get(url)
       .then((res) => {

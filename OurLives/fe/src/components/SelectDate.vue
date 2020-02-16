@@ -184,40 +184,59 @@ export default {
 <style scoped>
 .selectDecade {
   grid-area: selectDecade;
-  margin: 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .selectYear {
   grid-area: selectYear;
-  margin: 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .selectMonth {
   grid-area: selectMonth;
-  margin: 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .selectDay {
   grid-area: selectDay;
-  margin: 15px;
-}
-.selectTime {
-  grid-area: selectTime;
-  margin: 15px;
-  position: relative;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
-.selectExactDate {
-  grid-area: selectExactDate;
-  margin-top: 15px;
-  margin-left: 15px;
+.selectTime {
+  grid-area: selectTime;
+  position: relative;
+  margin: 8px;
 }
 
 .selectDate {
   grid-area: selectDate;
   display: grid;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+
+@media (max-width: 700px) {
+  .selectDate {
+  grid-template: " selectDecade " auto
+                 " selectYear   " auto
+                 " selectMonth  " auto
+                 " selectDay    " auto
+                 " selectTime   " auto
+                 / auto;
+  }
+}
+
+@media (min-width: 700px) {
+  .selectDate {
   grid-template: " selectDecade selectYear selectMonth selectDay selectTime" auto
                   /1fr          1fr        1fr         1fr       1fr;
+  }
 }
+
 </style>
 

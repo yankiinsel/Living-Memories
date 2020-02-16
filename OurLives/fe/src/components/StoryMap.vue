@@ -14,7 +14,7 @@ require('jquery-confirm');
 
 export default {
 
-  name: 'MemoryMap',
+  name: 'StoryMap',
   // Variables here
 
   props: ['coordinates', 'editEnabled', 'mapName'],
