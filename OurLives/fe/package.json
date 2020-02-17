@@ -15,7 +15,6 @@
     "bootstrap-vue": "^2.0.0-rc.11",
     "jquery": "^3.3.1",
     "jquery-confirm": "^3.3.3",
-    "node-sass": "^4.11.0",
     "pc-bootstrap4-datetimepicker": "^4.17.50",
     "sass-loader": "^7.1.0",
     "scriptjs": "^2.5.9",
@@ -31,7 +30,7 @@
     "vue-session": "^1.0.0",
     "vue-text-highlight": "^1.1.2",
     "vue-upload-image": "^1.1.0",
-    "vuex": "^3.0.1",
+    "vuex": "^3.1.2",
     "webpack-merge": "^4.1.4",
     "window": "^4.2.5"
   },
@@ -43,6 +42,7 @@
     "@vue/eslint-config-airbnb": "^3.0.5",
     "@vue/test-utils": "^1.0.0-beta.20",
     "chai": "^4.1.2",
+    "node-sass": "^4.13.1",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.23.1",
     "webpack-cli": "^3.1.2"
