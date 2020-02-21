@@ -28,7 +28,6 @@
           }}</span>
         </label>
     </image-uploader>
-    <img v-if="image" :src="image.dataUrl"/>
   </div>
 </template>
 
