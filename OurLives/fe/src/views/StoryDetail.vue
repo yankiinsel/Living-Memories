@@ -131,6 +131,12 @@ export default {
   margin: 8px;
  }
 
+ .thumbnail img {
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
 .title {
   grid-area: title;
   font-weight: bold;
