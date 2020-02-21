@@ -13,6 +13,7 @@
         </div>
     </b-navbar>
     <router-view/>
+    <notifications group="newPost" position="bottom center"/>
   </div>
 </template>
 
@@ -64,4 +65,5 @@ img.logo {
   margin-left: auto;
   margin-right: auto;
 }
+
 </style>

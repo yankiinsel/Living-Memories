@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import StoryService from '../services/StoryService';
 import MapService from '../services/MapService';
@@ -75,7 +76,7 @@ export default {
 
   computed: {
     story() {
-      return {
+      const temp = {
         description: this.message,
         title: this.title,
         imgUrl: this.imgUrl,
@@ -83,9 +84,14 @@ export default {
         coords: this.coordinates,
         taggedPeople: this.taggedPeople,
         username: this.username,
-        date: this.storyDate,
         isPublic: true,
       };
+
+      if (this.storyDate !== '' && this.storyDate !== undefined) {
+        temp.date = this.storyDate;
+      }
+
+      return temp;
     },
 
     postButtonName() {
@@ -121,8 +127,6 @@ export default {
 
     updateImageUrl(value) {
       this.imgUrl = value;
-      // eslint-disable-next-line no-debugger
-      debugger;
     },
 
     async postStory() {
@@ -141,14 +145,24 @@ export default {
           setTimeout(resolve, 2000, this.locs);
         }
       });
-      // eslint-disable-next-line no-debugger
-      debugger;
       Promise.all([promise1]).then((values) => {
         this.locs = values[0].filter(value => value.data).map(value => value.data);
         StoryService.post(this.story, () => {
           this.isLoading = false;
           this.$router.push({ name: 'Stories' });
-        }).catch(() => {
+          Vue.notify({
+            group: 'newPost',
+            title: 'Success',
+            text: 'You have successfully posted your story.',
+            type: 'success',
+          });
+        }).catch((e) => {
+          Vue.notify({
+            group: 'newPost',
+            title: 'Error',
+            text: e.message,
+            type: 'error',
+          });
           this.isLoading = false;
         });
       });

@@ -51,8 +51,6 @@ export default {
       this.hasImage = true;
       this.image = output;
       this.$emit('update', this.image.dataUrl);
-      console.log('Info', output.info);
-      console.log('Exif', output.exif);
     },
   },
 };
