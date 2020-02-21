@@ -16,13 +16,21 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+app.use(bodyParser.json({
+  limit: '10mb',
+  extended: true
+}))
+app.use(bodyParser.urlencoded({
+  limit: '10mb',
+  extended: true
+}))
 
 const MongoClient = require('mongodb').MongoClient;
 
 const uri = "mongodb+srv://" + username + ":" + password + "@living-memory-tvs0t.mongodb.net/test?retryWrites=true"
 
 // MongoDB Connection
-/* 
+/*
 MongoClient.connect(uri, function (err, client) {
     if (err) {
         console.log('Error occurred while connecting to MongoDB Atlas...\n', err);
