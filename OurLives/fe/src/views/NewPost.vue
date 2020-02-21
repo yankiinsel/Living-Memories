@@ -2,9 +2,6 @@
   <div id="Post">
     <div class="postStory">
       <div class="inputText">
-        <div class="thumbnail">
-          <img v-if="imgUrl" :src="imgUrl">
-        </div>
         <b-form-input class="editTitle"
                       type="text"
                       v-model="title"
@@ -13,10 +10,7 @@
                       type="text"
                       v-model="taggedPeople"
                       placeholder="Tell us who"/>
-        <b-form-input class="editImage"
-                      type="text"
-                      v-model="imgUrl"
-                      placeholder="Image URL"/>
+        <add-photo v-on:update="updateImageUrl"></add-photo>
         <story-map :coordinates="coordinates"
                     :editEnabled="true"
                     @update="updateStoryLocation"
@@ -45,6 +39,7 @@ import MapService from '../services/MapService';
 import Story from '../models/Story';
 import SelectDate from '../components/SelectDate.vue';
 import StoryMap from '../components/StoryMap.vue';
+import AddPhoto from '../components/AddPhoto.vue';
 
 export default {
 
@@ -54,6 +49,7 @@ export default {
   components: {
     SelectDate,
     StoryMap,
+    AddPhoto,
   },
 
   data() {
@@ -123,6 +119,12 @@ export default {
       this.coordinates = value;
     },
 
+    updateImageUrl(value) {
+      this.imgUrl = value;
+      // eslint-disable-next-line no-debugger
+      debugger;
+    },
+
     async postStory() {
       this.isLoading = true;
       const promise1 = new Promise((resolve) => {
@@ -139,6 +141,8 @@ export default {
           setTimeout(resolve, 2000, this.locs);
         }
       });
+      // eslint-disable-next-line no-debugger
+      debugger;
       Promise.all([promise1]).then((values) => {
         this.locs = values[0].filter(value => value.data).map(value => value.data);
         StoryService.post(this.story, () => {
@@ -175,21 +179,6 @@ export default {
   }
 }
 
-.thumbnail {
-  grid-area: thumbnail;
-  overflow: hidden;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.thumbnail img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  margin: auto;
-  max-height: 256px;
-  object-fit: contain;
-}
 
 .title {
   margin-top: 8px;
@@ -212,7 +201,6 @@ export default {
   display: grid;
   grid-template:  " editTitle        " auto
                   " editImage        " auto
-                  " thumbnail        " auto
                   " editTaggedPeople " auto
                   " selectDate       " auto
                   " map              " 256px
@@ -238,12 +226,6 @@ export default {
   margin-top: 8px;
   margin-bottom: 8px;
   grid-area: editTitle;
-}
-
-.editImage {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  grid-area: editImage;
 }
 
 .editTaggedPeople {
