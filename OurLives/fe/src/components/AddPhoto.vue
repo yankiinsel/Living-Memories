@@ -1,6 +1,10 @@
 <template>
   <div class="addPhoto">
+    <div class="photo">
+      <img v-if="imgUrl" :src="imgUrl"/>
+    </div>
     <image-uploader
+        id="imageUploader"
         :preview="true"
         :className="['fileinput', { 'fileinput--loaded': hasImage }]"
         capture="environment"
@@ -8,27 +12,14 @@
         doNotResize="gif"
         :autoRotate="true"
         outputFormat="verbose"
-        @input="setImage">
-        <label for="fileInput" slot="upload-label">
-          <figure>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-            >
-              <path
-                class="path1"
-                d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"
-              ></path>
-            </svg>
-          </figure>
-          <span class="upload-caption">{{
-            hasImage ? "Replace" : "Click to upload"
-          }}</span>
-        </label>
-    </image-uploader>
-  </div>
+        @input="setImage"
+        style="display: none;">
+      </image-uploader>
+      <b-button class="addPhotoButton"
+                variant="info"
+                v-on:click="addPhoto">{{addPhotoButtonName}}
+      </b-button>
+    </div>
 </template>
 
 <script>
@@ -41,16 +32,33 @@ export default {
 
   data() {
     return {
-      hasImage: false,
-      image: null,
+      image: { dataUrl: null },
     };
+  },
+
+  computed: {
+    imgUrl() {
+      return this.image.dataUrl;
+    },
+
+    hasImage() {
+      return this.imgUrl !== null;
+    },
+
+    addPhotoButtonName() {
+      return this.hasImage ? 'Replace' : 'Add Photo';
+    },
+
   },
 
   methods: {
     setImage(output) {
-      this.hasImage = true;
       this.image = output;
       this.$emit('update', this.image.dataUrl);
+    },
+
+    addPhoto() {
+      document.getElementById('imageUploader').click();
     },
   },
 };
@@ -62,8 +70,17 @@ export default {
   grid-area: editImage;
 }
 
-input#fileInput {
-  display: none !important;
+.photo img {
+  height: 100%;
+  max-width: 100%;
+  max-height: 256px;
+  object-fit: contain;
+  margin: 8px;
+}
+
+.addPhotoButton {
+  float: left;
+  margin: 8px 0px;
 }
 
 </style>

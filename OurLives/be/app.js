@@ -17,13 +17,13 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.json({
-  limit: '10mb',
+  limit: '100mb',
   extended: true
-}))
+}));
 app.use(bodyParser.urlencoded({
-  limit: '10mb',
+  limit: '100mb',
   extended: true
-}))
+}));
 
 const MongoClient = require('mongodb').MongoClient;
 

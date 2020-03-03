@@ -5,11 +5,11 @@
         <b-form-input class="editTitle"
                       type="text"
                       v-model="title"
-                      placeholder="Tell us what"/>
+                      placeholder="Tell us the title"/>
         <b-form-input class="editTaggedPeople"
                       type="text"
                       v-model="taggedPeople"
-                      placeholder="Tell us who"/>
+                      placeholder="Tell us who..."/>
         <add-photo v-on:update="updateImageUrl"></add-photo>
         <story-map :coordinates="coordinates"
                     :editEnabled="true"
@@ -21,7 +21,7 @@
         <b-form-textarea class="editDescription"
                       type="text"
                       v-model="message"
-                      placeholder="Enter your story..."/>
+                      placeholder="Tell us what..."/>
       </div>
       <b-button class="postButton"
                 variant="success"
@@ -189,10 +189,9 @@ export default {
   #Post {
     grid-template:
       ".    postStory  ." auto
-      /5%   1fr        5%;
+      /5%   90%        5%;
   }
 }
-
 
 .title {
   margin-top: 8px;
@@ -214,11 +213,11 @@ export default {
   margin:15px;
   display: grid;
   grid-template:  " editTitle        " auto
-                  " editImage        " auto
-                  " editTaggedPeople " auto
-                  " selectDate       " auto
-                  " map              " 256px
                   " editDescription  " auto
+                  " editImage        " auto
+                  " selectDate       " auto
+                  " editTaggedPeople " auto
+                  " map              " 256px
                   / 1fr             ;
 }
 
